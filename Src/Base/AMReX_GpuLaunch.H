@@ -33,8 +33,17 @@
 #define AMREX_GPU_Z_STRIDE 1
 
 #ifdef AMREX_USE_CUDA
-#  define AMREX_LAUNCH_KERNEL(MT, blocks, threads, sharedMem, stream, ... ) \
+// When the build defines AMREX_GPU_MIN_BLOCKS (from GPU_MIN_BLOCKS=B), route
+// launches through the two-arg launch_global<MT, min_blocks>, which carries
+// __launch_bounds__(MT, min_blocks). Demanding B resident blocks per SM forces
+// ptxas to cap registers at 65536/(MT*B) per thread. Unset => stock behaviour.
+#  ifdef AMREX_GPU_MIN_BLOCKS
+#    define AMREX_LAUNCH_KERNEL(MT, blocks, threads, sharedMem, stream, ... ) \
+        amrex::launch_global<MT, AMREX_GPU_MIN_BLOCKS><<<blocks, threads, sharedMem, stream>>>(__VA_ARGS__)
+#  else
+#    define AMREX_LAUNCH_KERNEL(MT, blocks, threads, sharedMem, stream, ... ) \
         amrex::launch_global<MT><<<blocks, threads, sharedMem, stream>>>(__VA_ARGS__)
+#  endif
 #  define AMREX_LAUNCH_KERNEL_NOBOUND(blocks, threads, sharedMem, stream, ... ) \
         amrex::launch_global    <<<blocks, threads, sharedMem, stream>>>(__VA_ARGS__)
 #elif defined(AMREX_USE_HIP)
