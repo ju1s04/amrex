@@ -101,11 +101,9 @@ else
 endif
 
 NVCC_FLAGS = -Wno-deprecated-gpu-targets -m64 -maxrregcount=$(CUDA_MAXREGCOUNT) --expt-relaxed-constexpr --expt-extended-lambda --forward-unknown-to-host-compiler
-# Optional register cap enforced through launch bounds. GPU_MIN_BLOCKS=B makes
+# Register cap enforced through launch bounds. Here its proposed to use GPU_MIN_BLOCKS=B so that it makes
 # AMREX_LAUNCH_KERNEL use launch_global<MT,B> i.e. __launch_bounds__(MT,B),
 # forcing ptxas to cap registers at 65536/(GPU_MAX_THREADS*B) per thread.
-# Unset => stock AMReX. (Needed because __launch_bounds__ makes nvcc ignore
-# -maxrregcount above, so CUDA_MAXREGCOUNT alone has no effect.)
 ifdef GPU_MIN_BLOCKS
   NVCC_FLAGS += -DAMREX_GPU_MIN_BLOCKS=$(GPU_MIN_BLOCKS)
 endif
