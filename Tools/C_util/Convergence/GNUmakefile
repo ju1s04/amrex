@@ -19,9 +19,9 @@ USE_MPI       = FALSE
 #
 #EBASE = Add
 ### this has no main EBASE = ComputeAmrDataNorms
-#EBASE = ComparePlotfiles
+EBASE = ComparePlotfiles
 #EBASE = DiffFab
-EBASE = DiffSameDomainRefined
+#EBASE = DiffSameDomainRefined
 #EBASE = DiffSameDomainRefinedComposite
 #EBASE = DiffSameDomainRefinedStag
 #EBASE = DiffSameGrid2
